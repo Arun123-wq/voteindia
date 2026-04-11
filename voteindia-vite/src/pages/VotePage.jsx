@@ -11,9 +11,9 @@ export default function VotePage({ nav, user, voted, setVoted }) {
   const [voteError, setVoteError]   = useState('')
 
   useEffect(() => {
-    fetch('/api/candidates')
+    apiFetch('/candidates')
       .then(r => r.json())
-      .then(d => { setCandidates(d); setLoading(false) })
+      .then(d => { setCandidates(Array.isArray(d) ? d : []); setLoading(false) })
       .catch(e => { console.error(e); setLoading(false) })
   }, [])
 

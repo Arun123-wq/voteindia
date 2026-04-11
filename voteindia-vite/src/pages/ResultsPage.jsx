@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { apiFetch } from '../api'
 
 export default function ResultsPage() {
   const [CANDIDATES_UP, setCandidates] = useState([])
@@ -6,14 +7,20 @@ export default function ResultsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([
-      fetch('/api/candidates').then(r=>r.json()),
-      fetch('/api/parties').then(r=>r.json())
-    ]).then(([c, p]) => {
-      setCandidates(Array.isArray(c) ? c : []);
-      setParties(Array.isArray(p) ? p : []); 
-      setLoading(false);
-    }).catch(e => { console.error(e); setLoading(false); })
+    const loadData = () => {
+      Promise.all([
+        apiFetch('/results').then(r=>r.json()),
+        apiFetch('/parties').then(r=>r.json())
+      ]).then(([c, p]) => {
+        setCandidates(Array.isArray(c) ? c : []);
+        setParties(Array.isArray(p) ? p : []); 
+        setLoading(false);
+      }).catch(e => { console.error(e); setLoading(false); })
+    }
+
+    loadData()
+    const timer = setInterval(loadData, 30000) // Auto-refresh every 30 seconds
+    return () => clearInterval(timer)
   }, [])
 
   if (loading) return <div className="page" style={{paddingTop:'2rem',textAlign:'center'}}>Loading results...</div>

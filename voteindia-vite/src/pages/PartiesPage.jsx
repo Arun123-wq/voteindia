@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { apiFetch } from '../api'
 
 function PartyDetail({ party:p, onBack }) {
   return (
@@ -67,9 +68,9 @@ export default function PartiesPage() {
   const [selected, setSelected] = useState(null)
 
   useEffect(() => {
-    fetch('/api/parties')
+    apiFetch('/parties')
       .then(res => res.json())
-      .then(data => { setParties(data); setLoading(false); })
+      .then(data => { setParties(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(err => { console.error(err); setLoading(false); })
   }, [])
 

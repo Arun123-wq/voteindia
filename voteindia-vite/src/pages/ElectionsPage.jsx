@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { apiFetch } from '../api'
 
 const TIMELINE = [
   {date:'Jan 15, 2026', title:'Model Code of Conduct Announced', desc:'ECI announces MCC for upcoming elections. Political parties must comply immediately.', color:'#FF9933', done:true},
@@ -14,9 +15,9 @@ export default function ElectionsPage({ nav }) {
   const [filter, setFilter] = useState('all')
 
   useEffect(() => {
-    fetch('/api/elections')
+    apiFetch('/elections')
       .then(res => res.json())
-      .then(data => { setElections(data); setLoading(false); })
+      .then(data => { setElections(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(err => { console.error(err); setLoading(false); })
   }, [])
 
