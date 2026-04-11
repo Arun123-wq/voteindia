@@ -3,7 +3,7 @@
  * Automatically attaches the JWT Bearer token to every request.
  */
 
-const BASE = '/api';
+const BASE = (import.meta.env.VITE_API_URL || '') + '/api';
 
 /** Retrieve the stored JWT token */
 export const getToken = () => localStorage.getItem('vi_token');
