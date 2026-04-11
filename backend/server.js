@@ -60,10 +60,15 @@ if (fs.existsSync(buildPath)) {
   console.warn(`   Make sure 'npm run build' was executed successfully in the frontend folder.`);
 }
 
-// ─── Start Server ─────────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 VoteIndia server running on http://localhost:${PORT}`);
-  console.log(`   Auth:     POST /api/auth/login | POST /api/auth/register`);
-  console.log(`   Protected: GET  /api/auth/me   | POST /api/vote`);
-});
+// ─── Start Server (Only locally) ─────────────────────────────────────────────
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 VoteIndia server running on http://localhost:${PORT}`);
+    console.log(`   Auth:     POST /api/auth/login | POST /api/auth/register`);
+    console.log(`   Protected: GET  /api/auth/me   | POST /api/vote`);
+  });
+}
+
+// ─── Export for Vercel Serverless Functions ───────────────────────────────────
+module.exports = app;
