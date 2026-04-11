@@ -1,0 +1,9 @@
+{
+  "name": "voteindia-fullstack",
+  "version": "1.0.0",
+  "description": "Unified build for VoteIndia",
+  "scripts": {
+    "build": "npm install --prefix voteindia-vite && npm run build --prefix voteindia-vite && npm install --prefix backend",
+    "start": "node backend/server.js"
+  }
+}

@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 const authRoutes = require('./routes/auth');
 const apiRoutes  = require('./routes/api');
@@ -35,9 +36,14 @@ app.use('/api/auth', authRoutes);  // Public: /register, /login | Protected: /me
 app.use('/api',      apiRoutes);   // Public: /parties, /elections, /candidates, /results
                                    // Protected: /vote, /vote/status
 
-// ─── 404 Fallback ─────────────────────────────────────────────────────────────
-app.use((req, res) => {
-  res.status(404).json({ message: `Route ${req.method} ${req.url} not found.` });
+// ─── Serve Frontend ───────────────────────────────────────────────────────────
+// Serve static files from the Vite build directory
+app.use(express.static(path.join(__dirname, '../voteindia-vite/dist')));
+
+// ─── Wildcard Fallback ────────────────────────────────────────────────────────
+// Catch-all route to serve the frontend for any non-API request (handles SPA routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../voteindia-vite/dist/index.html'));
 });
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
