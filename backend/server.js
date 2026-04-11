@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 const authRoutes = require('./routes/auth');
 const apiRoutes  = require('./routes/api');
@@ -37,14 +38,21 @@ app.use('/api',      apiRoutes);   // Public: /parties, /elections, /candidates,
                                    // Protected: /vote, /vote/status
 
 // ─── Serve Frontend ───────────────────────────────────────────────────────────
-// Serve static files from the Vite build directory
-app.use(express.static(path.join(__dirname, '../voteindia-vite/dist')));
+const buildPath = path.resolve(__dirname, '../voteindia-vite/dist');
 
-// ─── Wildcard Fallback ────────────────────────────────────────────────────────
-// Catch-all route to serve the frontend for any non-API request (handles SPA routing)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../voteindia-vite/dist/index.html'));
-});
+if (fs.existsSync(buildPath)) {
+  console.log(`✅ Serving static frontend from: ${buildPath}`);
+  app.use(express.static(buildPath));
+  
+  // ─── Wildcard Fallback ─────────────────────────────────────────────────────
+  // Catch-all route to serve the frontend for React Router SPA navigation
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(buildPath, 'index.html'));
+  });
+} else {
+  console.warn(`⚠️ Warning: Static build path not found at ${buildPath}`);
+  console.warn(`   Make sure 'npm run build' was executed successfully in the frontend folder.`);
+}
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;

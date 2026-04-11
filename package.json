@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Unified build for VoteIndia",
   "scripts": {
-    "build": "npm install --prefix voteindia-vite && npm run build --prefix voteindia-vite && npm install --prefix backend",
+    "build": "cd voteindia-vite && npm install && npm run build && cd ../backend && npm install",
     "start": "node backend/server.js"
   }
 }
