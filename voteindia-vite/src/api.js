@@ -3,6 +3,9 @@
  * Automatically attaches the JWT Bearer token to every request.
  */
 
+// BASE URL detects environment automatically. 
+// On Render (unified deployment), it defaults to '/api'. 
+// For local development, it can be overridden by VITE_API_URL in .env if needed.
 const BASE = (import.meta.env.VITE_API_URL || '') + '/api';
 
 /** Retrieve the stored JWT token */
