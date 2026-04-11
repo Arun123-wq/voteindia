@@ -6,6 +6,7 @@ const Candidate = require('./models/Candidate');
 const User      = require('./models/User');
 
 const MONGO_URI = process.env.MONGO_URI;
+console.log('Attempting to connect with URI:', MONGO_URI ? MONGO_URI.replace(/:([^@]+)@/, ':****@') : 'UNDEFINED');
 
 async function checkData() {
   try {

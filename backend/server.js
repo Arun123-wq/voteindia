@@ -23,7 +23,12 @@ app.use((req, res, next) => {
 });
 
 // ─── MongoDB Connection ───────────────────────────────────────────────────────
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/voteindia';
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/voteindia';
+
+console.log('📡 Connecting to MongoDB...');
+// Masking the password for security in logs
+const maskedURI = MONGO_URI.replace(/:([^@/]+)@/, ':****@');
+console.log(`🔗 Target: ${maskedURI}`);
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('✅ MongoDB Connected'))
@@ -46,7 +51,8 @@ if (fs.existsSync(buildPath)) {
   
   // ─── Wildcard Fallback ─────────────────────────────────────────────────────
   // Catch-all route to serve the frontend for React Router SPA navigation
-  app.get('*', (req, res) => {
+  // Note: Express 5 requires named wildcards or regex for catch-all routes.
+  app.get(/.*/, (req, res) => {
     res.sendFile(path.join(buildPath, 'index.html'));
   });
 } else {
