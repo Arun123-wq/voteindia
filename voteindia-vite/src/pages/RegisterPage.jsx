@@ -19,18 +19,27 @@ export default function RegisterPage({ nav }) {
       setLoading(true);
       try {
         const res  = await registerUser(formData);
-        const data = await res.json();
+        
+        // Handle non-JSON or error responses gracefully
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (e) {
+          data = { message: `Server error (${res.status}): ${res.statusText}` };
+        }
+
         setLoading(false);
         if (res.ok) {
           // Auto-login: save token so user is authenticated immediately
           if (data.token) saveSession(data.token, data.user);
           setStep(3);
         } else {
-          alert(data.message || 'Registration failed');
+          alert(data.message || data.error || 'Registration failed');
         }
       } catch (err) {
         setLoading(false);
-        alert('Network error — make sure the server is running.');
+        console.error('Registration error:', err);
+        alert('Could not connect to the server. Please check your internet or try again later.');
       }
     } else if (step < 3) {
       setStep(step + 1)

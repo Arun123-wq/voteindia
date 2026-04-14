@@ -34,13 +34,22 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => {
     console.error('❌ MongoDB connection error:', err.message);
-    process.exit(1);
+    // On Vercel, we don't want to process.exit(1) as it causes the function to fail hard.
+    // Instead, we let it stay alive so subsequent requests can report the error.
   });
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);  // Public: /register, /login | Protected: /me
 app.use('/api',      apiRoutes);   // Public: /parties, /elections, /candidates, /results
                                    // Protected: /vote, /vote/status
+
+app.get('/api/health-check', (req, res) => {
+  res.json({
+    status: 'online',
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    time: new Date().toISOString()
+  });
+});
 
 // ─── Serve Frontend ───────────────────────────────────────────────────────────
 const buildPath = path.resolve(__dirname, '../voteindia-vite/dist');

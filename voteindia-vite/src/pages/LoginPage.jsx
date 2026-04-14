@@ -16,17 +16,25 @@ export default function LoginPage({ nav, setUser }) {
     setLoading(true)
     try {
       const res  = await loginUser(id.trim(), pw)
-      const data = await res.json()
+      
+      let data = {}
+      try {
+        data = await res.json()
+      } catch (e) {
+        data = { message: `Server error (${res.status}): ${res.statusText}` }
+      }
+
       setLoading(false)
       if (res.ok) {
         setUser(data.user, data.token)   // saves token + user to localStorage
         nav('dashboard')
       } else {
-        setError(data.message || 'Login failed. Please check your credentials.')
+        setError(data.message || data.error || 'Login failed. Please check your credentials.')
       }
-    } catch {
+    } catch (err) {
       setLoading(false)
-      setError('Network error — make sure the server is running.')
+      console.error('Login error:', err)
+      setError('Could not connect to the server. Please check your internet or try again later.')
     }
   }
 

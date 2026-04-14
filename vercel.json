@@ -11,15 +11,8 @@
       "config": { "distDir": "dist" }
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "voteindia-vite/$1",
-      "continue": true
-    }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "backend/server.js" },
+    { "source": "/(.*)", "destination": "/$1" }
   ]
 }
